@@ -15,6 +15,60 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #e8fff3, #e5f3ff, #f1eaff);
+    color: #123b32;
+}
+
+.main-title {
+    font-size: 48px;
+    font-weight: 900;
+    color: #087f5b;
+}
+
+.subtitle {
+    font-size: 19px;
+    color: #245b70;
+}
+
+div[data-testid="stMetric"] {
+    background: linear-gradient(135deg, #b9f6d3, #b9e8ff);
+    padding: 25px;
+    border-radius: 18px;
+    border: 2px solid #65cba0;
+    color: #123b32;
+}
+
+div[data-testid="stMetric"] label,
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: #075b46 !important;
+}
+
+h1, h2, h3 {
+    color: #075b46 !important;
+}
+
+.stButton button {
+    background: linear-gradient(90deg, #00a86b, #008acb);
+    color: white !important;
+    border-radius: 12px;
+    font-weight: bold;
+    border: none;
+    padding: 12px;
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #b9f6d3, #c5e8ff);
+}
+
+div[data-testid="stExpander"] {
+    background: #d9fff0;
+    border-radius: 14px;
+}
+</style>
+""", unsafe_allow_html=True)
 /* Make technology cards readable */
 .feature-card,
 .feature-card h1,
