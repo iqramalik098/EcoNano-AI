@@ -1,5 +1,7 @@
+
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -9,179 +11,41 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================
-# COLORFUL WEBSITE DESIGN
-# =========================
-
+# Custom styling
 st.markdown("""
 <style>
-
-/* Main background */
 .stApp {
-    background: linear-gradient(135deg, #e8fff3, #e5f3ff, #f1eaff);
-    color: #123b32;
+    background: linear-gradient(135deg, #f1f8f3, #ffffff);
 }
-
-/* Main headings */
 .main-title {
-    font-size: 48px;
-    font-weight: 900;
-    color: #087f5b !important;
+    font-size: 42px;
+    font-weight: 800;
+    color: #14532d;
 }
-
 .subtitle {
-    font-size: 19px;
-    color: #245b70 !important;
+    color: #52705d;
+    font-size: 17px;
 }
-
-/* Metric cards */
 div[data-testid="stMetric"] {
-    background: linear-gradient(135deg, #b9f6d3, #b9e8ff);
-    padding: 25px;
-    border-radius: 18px;
-    border: 2px solid #65cba0;
-}
-
-div[data-testid="stMetric"] label,
-div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-    color: #075b46 !important;
-}
-
-/* Hide unwanted metric arrows */
-div[data-testid="stMetricDelta"] {
-    display: none !important;
-}
-
-/* General text */
-.stApp p,
-.stApp li,
-.stApp label {
-    color: #111111 !important;
-}
-
-/* Headings */
-.stApp h1,
-.stApp h2,
-.stApp h3 {
-    color: #075b46 !important;
-}
-
-/* Dark technology cards */
-.feature-card,
-.feature-card h1,
-.feature-card h2,
-.feature-card h3,
-.feature-card p,
-.feature-card span {
-    color: #ffffff !important;
-}
-
-/* Buttons */
-.stButton button {
-    background: linear-gradient(90deg, #00a86b, #008acb);
-    color: white !important;
-    border-radius: 12px;
-    font-weight: bold;
-    border: none;
-    padding: 12px;
-}
-
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #b9f6d3, #c5e8ff);
-}
-
-/* Expanders */
-div[data-testid="stExpander"] {
-    background: #d9fff0;
+    background: #e8f5e9;
+    padding: 18px;
     border-radius: 14px;
+    border: 1px solid #c8e6c9;
 }
-
-st.markdown("""
-<style>
-""", unsafe_allow_html=True)
-.stApp {
-    background: linear-gradient(
-        135deg,
-        #e0fff1,
-        #e3f4ff,
-        #f0e7ff
-    );
-    color: #173c35;
-}
-
-.main-title {
-    font-size: 52px;
-    font-weight: 900;
-    color: #00875a;
-}
-
-.subtitle {
-    font-size: 19px;
-    color: #24647a;
-}
-
-div[data-testid="stMetric"] {
-    background: linear-gradient(
-        135deg,
-        #b9f6d3,
-        #b9e8ff
-    );
-    padding: 24px;
-    border-radius: 18px;
-    border: 2px solid #65cba0;
-    box-shadow: 0 5px 15px rgba(0,100,80,0.12);
-}
-
-div[data-testid="stMetric"] label,
-div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-    color: #075b46 !important;
-}
-
-h1, h2, h3 {
-    color: #075b46 !important;
-}
-
 .stButton button {
-    background: linear-gradient(
-        90deg,
-        #00a86b,
-        #008acb
-    );
-    color: white !important;
-    border-radius: 12px;
+    background-color: #16834a;
+    color: white;
+    border-radius: 10px;
     font-weight: bold;
-    border: none;
-    padding: 12px;
 }
-
-section[data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        #b9f6d3,
-        #c5e8ff,
-        #e5d6ff
-    );
-}
-
-div[data-testid="stExpander"] {
-    background: #d9fff0;
-    border-radius: 14px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-
-# =========================
-# HEADER
-# =========================
-
+# Header
 st.markdown(
     '<div class="main-title">🌿 EcoNano AI</div>',
     unsafe_allow_html=True
 )
-
 st.markdown(
     '<div class="subtitle">Intelligent Nanotechnology for Sustainable Water Remediation</div>',
     unsafe_allow_html=True
@@ -189,148 +53,110 @@ st.markdown(
 
 st.divider()
 
-
-# =========================
-# NAVIGATION
-# =========================
-
-st.sidebar.title("🌱 EcoNano AI")
+# Sidebar navigation
+st.sidebar.title("🌱 EcoNano Navigation")
 
 page = st.sidebar.radio(
     "Explore Platform",
     [
-        "🏠 Home",
+        "🏠 Dashboard",
         "💧 Water Analyzer",
         "🧬 Material Explorer",
-        "📊 AI Comparison",
-        "🌍 Sustainability",
-        "ℹ️ About Us"
+        "📊 Performance Comparison",
+        "🌍 Sustainability Center",
+        "ℹ️ About Project"
     ]
 )
 
-
 materials = {
     "ZnO Nanoparticles": 0.78,
-    "Titanium Dioxide": 0.82,
-    "Magnetite": 0.73,
+    "Titanium Dioxide (TiO₂)": 0.82,
+    "Magnetite (Fe₃O₄)": 0.73,
     "Biochar Composite": 0.85
 }
 
+if page == "🏠 Dashboard":
 
-# =========================
-# HOME PAGE
-# =========================
-
-if page == "🏠 Home":
-
-    st.header("Welcome to EcoNano AI 🌎")
+    st.subheader("Welcome to EcoNano AI")
 
     st.write(
-        "An interactive research platform exploring "
-        "nanomaterials and artificial intelligence "
-        "for sustainable water treatment."
+        "An interactive computational platform exploring "
+        "nanomaterial-assisted approaches to water remediation."
     )
 
-    a, b, c = st.columns(3)
+    c1, c2, c3 = st.columns(3)
 
-    a.metric("🧬 Materials", "4", "Candidates explored")
-    b.metric("💧 Pollutant Groups", "3", "Research categories")
-    c.metric("🌱 Research Focus", "Sustainability")
-
-    st.divider()
+    c1.metric("Material Candidates", "4")
+    c2.metric("Pollutant Categories", "3")
+    c3.metric("Research Focus", "Sustainable Water")
 
     st.subheader("Explore Our Technology")
 
     col1, col2 = st.columns(2)
 
     with col1:
+        st.info("💧 **Water Analysis**\n\nExplore water-treatment scenarios.")
 
-        st.info("""
-        💧 WATER ANALYSIS
-
-        Explore hypothetical water-treatment scenarios.
-        """)
-
-        st.success("""
-        🧬 NANOMATERIAL EXPLORER
-
-        Discover candidate nanomaterials.
-        """)
+        st.success("🧬 **Nanomaterial Explorer**\n\nCompare potential materials.")
 
     with col2:
+        st.warning("📊 **AI Predictions**\n\nExplore illustrative model outputs.")
 
-        st.warning("""
-        🤖 AI PREDICTIONS
-
-        Explore illustrative model calculations.
-        """)
-
-        st.info("""
-        🌍 ENVIRONMENTAL IMPACT
-
-        Explore sustainability and safety considerations.
-        """)
+        st.info("🌍 **Environmental Impact**\n\nConsider sustainability and safety.")
 
     st.divider()
 
-    st.subheader("Our Mission 🌿")
+    st.subheader("Our Mission")
 
     st.write(
-        "Connecting environmental chemistry, "
-        "nanotechnology and computational research "
-        "to support sustainable water remediation."
+        "To connect environmental chemistry, nanotechnology, "
+        "and artificial intelligence to support sustainable "
+        "water-treatment research."
     )
-
-    st.image(
-        "https://images.unsplash.com/photo-1437482078695-73f5ca6c96e2?w=1200",
-        use_container_width=True
-    )
-
-
-# =========================
-# WATER ANALYZER
-# =========================
 
 elif page == "💧 Water Analyzer":
 
-    st.header("💧 Water Quality Analyzer")
+    st.subheader("💧 Interactive Water Quality Analyzer")
 
     st.write(
-        "Configure a hypothetical treatment scenario."
+        "Configure a hypothetical water-treatment scenario "
+        "and explore illustrative predictions."
     )
 
-    with st.form("analysis_form"):
+    with st.form("water_form"):
 
         pollutant = st.selectbox(
-            "Pollutant Category",
+            "Select pollutant",
             ["Dye", "Heavy Metal Ion", "Pharmaceutical"]
         )
 
         concentration = st.slider(
-            "Initial Concentration (mg/L)",
+            "Initial pollutant concentration (mg/L)",
             1, 100, 25
         )
 
         ph = st.slider(
             "Water pH",
-            2.0, 12.0, 7.0
+            2.0, 12.0, 7.0, 0.1
         )
 
         time = st.slider(
-            "Contact Time (minutes)",
+            "Contact time (minutes)",
             10, 240, 60
         )
 
-        material = st.selectbox(
-            "Select Nanomaterial",
+        selected_material = st.selectbox(
+            "Select nanomaterial",
             list(materials.keys())
         )
 
-        analyze = st.form_submit_button(
+        submitted = st.form_submit_button(
             "🚀 Analyze Water Sample"
         )
 
-    if analyze:
+    if submitted:
+
+        base = materials[selected_material]
 
         ph_factor = max(
             0.55,
@@ -351,7 +177,7 @@ elif page == "💧 Water Analyzer":
         }[pollutant]
 
         estimate = (
-            materials[material]
+            base
             * ph_factor
             * time_factor
             * concentration_factor
@@ -361,103 +187,106 @@ elif page == "💧 Water Analyzer":
 
         estimate = min(95, max(0, estimate))
 
-        remaining = concentration * (
-            1 - estimate / 100
-        )
-
         st.success("Scenario analysis completed!")
 
-        x, y, z = st.columns(3)
+        c1, c2, c3 = st.columns(3)
 
-        x.metric(
+        c1.metric(
             "Illustrative Removal Estimate",
             f"{estimate:.1f}%"
         )
 
-        y.metric(
+        c2.metric(
             "Initial Concentration",
             f"{concentration} mg/L"
         )
 
-        z.metric(
-            "Remaining Concentration",
-            f"{remaining:.2f} mg/L"
+        c3.metric(
+            "Selected Material",
+            selected_material
         )
 
+        remaining = concentration * (1 - estimate / 100)
+
+        st.subheader("Concentration Scenario")
+
         chart = pd.DataFrame({
-            "Stage": ["Initial", "Illustrative Remaining"],
-            "Concentration": [concentration, remaining]
+            "Stage": ["Initial", "Illustrative remaining"],
+            "Concentration (mg/L)": [
+                concentration,
+                remaining
+            ]
         })
 
         fig = px.bar(
             chart,
             x="Stage",
-            y="Concentration",
+            y="Concentration (mg/L)",
             color="Stage",
-            title="Illustrative Concentration Comparison",
-            color_discrete_sequence=["#00b894", "#0984e3"]
+            title="Illustrative Pollutant Concentration"
         )
 
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
+        st.plotly_chart(fig, use_container_width=True)
 
         st.warning(
-            "This is an illustrative demonstration calculation, "
-            "not an experimentally validated AI prediction. "
-            "It cannot establish real treatment performance "
-            "or drinking-water safety."
+            "Research disclaimer: This is a demonstration "
+            "calculation using illustrative assumptions, not "
+            "an experimentally validated prediction. It must "
+            "not be used to determine real drinking-water safety."
         )
-
-
-# =========================
-# MATERIAL EXPLORER
-# =========================
 
 elif page == "🧬 Material Explorer":
 
-    st.header("🧬 Nanomaterial Explorer")
+    st.subheader("🧬 Nanomaterial Explorer")
 
     descriptions = {
         "ZnO Nanoparticles":
-            "Investigated for photocatalysis and optical sensing.",
+            "Zinc oxide nanoparticles are investigated for "
+            "photocatalytic and environmental applications.",
 
-        "Titanium Dioxide":
-            "Studied for photocatalytic pollutant degradation.",
+        "Titanium Dioxide (TiO₂)":
+            "Titanium dioxide is widely researched for "
+            "photocatalytic degradation of pollutants.",
 
-        "Magnetite":
-            "Magnetic iron oxide investigated for separation applications.",
+        "Magnetite (Fe₃O₄)":
+            "Magnetite is a magnetic iron oxide with potential "
+            "applications in separation and remediation.",
 
         "Biochar Composite":
-            "Carbon-based material investigated for adsorption."
+            "Biochar-based materials are investigated for "
+            "adsorption and sustainable pollutant management."
     }
 
     for name, description in descriptions.items():
 
         with st.expander("🔬 " + name):
-
             st.write(description)
 
-            st.info(
-                "Research candidate — experimental performance "
-                "must be independently established."
-            )
+            if name == "ZnO Nanoparticles":
+                st.write("Research focus: photocatalysis and sensing.")
 
+            elif name == "Titanium Dioxide (TiO₂)":
+                st.write("Research focus: photocatalytic treatment.")
 
-# =========================
-# AI COMPARISON
-# =========================
+            elif name == "Magnetite (Fe₃O₄)":
+                st.write("Research focus: magnetic separation.")
 
-elif page == "📊 AI Comparison":
+            else:
+                st.write("Research focus: adsorption and waste valorization.")
 
-    st.header("📊 Material Comparison Dashboard")
+elif page == "📊 Performance Comparison":
+
+    st.subheader("📊 Compare Candidate Materials")
+
+    st.write(
+        "Explore illustrative material scores. "
+        "These are demonstration values, not measured efficiencies."
+    )
 
     comparison = pd.DataFrame({
         "Material": list(materials.keys()),
         "Illustrative Score": [
-            value * 100
-            for value in materials.values()
+            value * 100 for value in materials.values()
         ]
     })
 
@@ -466,24 +295,15 @@ elif page == "📊 AI Comparison":
         x="Material",
         y="Illustrative Score",
         color="Material",
-        title="Illustrative Material Scores",
-        text_auto=".1f",
-        color_discrete_sequence=[
-            "#00b894",
-            "#0984e3",
-            "#6c5ce7",
-            "#e17055"
-        ]
+        title="Illustrative Material Comparison",
+        text_auto=".1f"
     )
 
     fig.update_layout(
-        yaxis_title="Demonstration score (not measured efficiency)"
+        yaxis_title="Demonstration score (not experimental %)"
     )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+    st.plotly_chart(fig, use_container_width=True)
 
     st.dataframe(
         comparison,
@@ -491,100 +311,66 @@ elif page == "📊 AI Comparison":
         hide_index=True
     )
 
-    st.caption(
-        "Scores are illustrative demonstration values, "
-        "not measured material performance."
-    )
+elif page == "🌍 Sustainability Center":
 
-
-# =========================
-# SUSTAINABILITY
-# =========================
-
-elif page == "🌍 Sustainability":
-
-    st.header("🌍 Sustainability Center")
+    st.subheader("🌍 Environmental Sustainability Center")
 
     st.write(
-        "Evaluate important environmental considerations "
-        "when researching nanomaterial-based water treatment."
+        "Nanomaterial performance alone does not establish "
+        "environmental sustainability."
     )
 
     factors = [
         "Nanoparticle toxicity assessment",
         "Material recovery and reuse",
-        "Energy consumption",
+        "Energy requirements",
         "Chemical waste generation",
         "Lifecycle environmental impact",
-        "Secondary pollution risk"
+        "Potential secondary pollution"
     ]
 
-    st.subheader("Environmental Research Checklist")
+    st.markdown("### Sustainability assessment checklist")
 
     for factor in factors:
-
-        st.checkbox(
-            factor,
-            key=factor
-        )
+        st.checkbox(factor, key=factor)
 
     st.info(
-        "This checklist supports research planning. "
-        "It is not an environmental safety certification."
+        "These checks are a research-planning aid, not a "
+        "certification of environmental safety."
     )
 
+elif page == "ℹ️ About Project":
 
-# =========================
-# ABOUT
-# =========================
-
-elif page == "ℹ️ About Us":
-
-    st.header("About EcoNano AI 🌿")
+    st.subheader("About EcoNano AI")
 
     st.write("""
-    EcoNano AI is a computational research prototype
-    connecting four interdisciplinary areas:
+    EcoNano AI is a student-developed computational research
+    prototype combining:
 
-    🧪 Environmental Chemistry
+    - Environmental Chemistry
+    - Nanomaterials Science
+    - Machine Learning
+    - Sustainable Water Remediation
 
-    🧬 Nanomaterials Science
+    The platform explores how computational tools can support
+    early-stage research into nanomaterial-assisted treatment.
 
-    🤖 Artificial Intelligence
-
-    🌍 Sustainable Water Remediation
-
-    The platform explores computational approaches
-    to early-stage environmental research.
+    **Current limitation:** The demonstration calculations use
+    illustrative assumptions and synthetic data. They are not
+    experimentally validated.
     """)
 
-    st.subheader("Technology Stack")
+    st.markdown("### Technology Stack")
 
-    st.success(
-        "Python | Streamlit | Pandas | Plotly | NumPy | Scikit-learn"
+    st.write(
+        "🐍 Python | 🎈 Streamlit | 📊 Plotly | "
+        "🧮 Pandas | 🤖 Machine Learning"
     )
-
-    st.subheader("Scientific Limitations")
-
-    st.warning(
-        "The current demonstration uses illustrative assumptions "
-        "and synthetic data. It is not experimentally validated."
-    )
-
-
-# =========================
-# FOOTER
-# =========================
 
 st.divider()
 
 st.markdown(
-    """
-    <div style="text-align:center; padding:20px;">
-        <h3>🌿 EcoNano AI</h3>
-        <p>Science • Innovation • Sustainability</p>
-        <p>Building a cleaner future through research.</p>
-    </div>
-    """,
+    "<center>🌿 EcoNano AI | Building a Sustainable Future "
+    "Through Science and Innovation</center>",
     unsafe_allow_html=True
 )
