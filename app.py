@@ -15,30 +15,31 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-st.markdown("""
-<style>
+
+/* Main background */
 .stApp {
     background: linear-gradient(135deg, #e8fff3, #e5f3ff, #f1eaff);
     color: #123b32;
 }
 
+/* Main headings */
 .main-title {
     font-size: 48px;
     font-weight: 900;
-    color: #087f5b;
+    color: #087f5b !important;
 }
 
 .subtitle {
     font-size: 19px;
-    color: #245b70;
+    color: #245b70 !important;
 }
 
+/* Metric cards */
 div[data-testid="stMetric"] {
     background: linear-gradient(135deg, #b9f6d3, #b9e8ff);
     padding: 25px;
     border-radius: 18px;
     border: 2px solid #65cba0;
-    color: #123b32;
 }
 
 div[data-testid="stMetric"] label,
@@ -46,30 +47,26 @@ div[data-testid="stMetric"] [data-testid="stMetricValue"] {
     color: #075b46 !important;
 }
 
-h1, h2, h3 {
+/* Hide unwanted metric arrows */
+div[data-testid="stMetricDelta"] {
+    display: none !important;
+}
+
+/* General text */
+.stApp p,
+.stApp li,
+.stApp label {
+    color: #111111 !important;
+}
+
+/* Headings */
+.stApp h1,
+.stApp h2,
+.stApp h3 {
     color: #075b46 !important;
 }
 
-.stButton button {
-    background: linear-gradient(90deg, #00a86b, #008acb);
-    color: white !important;
-    border-radius: 12px;
-    font-weight: bold;
-    border: none;
-    padding: 12px;
-}
-
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #b9f6d3, #c5e8ff);
-}
-
-div[data-testid="stExpander"] {
-    background: #d9fff0;
-    border-radius: 14px;
-}
-</style>
-""", unsafe_allow_html=True)
-/* Make technology cards readable */
+/* Dark technology cards */
 .feature-card,
 .feature-card h1,
 .feature-card h2,
@@ -79,56 +76,29 @@ div[data-testid="stExpander"] {
     color: #ffffff !important;
 }
 
-/* Improve readability of dark cards */
-.feature-card {
-    color: #ffffff !important;
-}
-
-/* Hide unwanted black metric indicators */
-div[data-testid="stMetricDelta"] {
-    display: none !important;
-}
-/* Keep normal text dark */
-.stApp p,
-.stApp li,
-.stApp label {
-    color: #111111 !important;
-}
-
-/* Make text white inside dark cards */
-div[data-testid="stMetric"],
-div[data-testid="stMetric"] label,
-div[data-testid="stMetric"] [data-testid="stMetricValue"],
-div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
-    color: #ffffff !important;
-}
-
-/* Make headings visible */
-.stApp h1,
-.stApp h2,
-.stApp h3 {
-    color: #111111 !important;
-}
-/* Improve text visibility */
-.stApp p,
-.stApp li,
-.stApp label,
-.stApp h1,
-.stApp h2,
-.stApp h3 {
-    color: #111111 !important;
-}
-
-/* Make dashboard descriptions readable */
-div[data-testid="stMarkdownContainer"] p {
-    color: #111111 !important;
-}
-
-/* Keep buttons white */
+/* Buttons */
 .stButton button {
+    background: linear-gradient(90deg, #00a86b, #008acb);
     color: white !important;
+    border-radius: 12px;
+    font-weight: bold;
+    border: none;
+    padding: 12px;
 }
 
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #b9f6d3, #c5e8ff);
+}
+
+/* Expanders */
+div[data-testid="stExpander"] {
+    background: #d9fff0;
+    border-radius: 14px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 .stApp {
     background: linear-gradient(
         135deg,
