@@ -1,135 +1,376 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, r2_score
+import plotly.graph_objects as go
 
-st.set_page_config(page_title="EcoNano AI", page_icon="🌱", layout="wide")
-
-st.title("🌱 EcoNano AI")
-st.subheader("Decision support for nanomaterial-assisted water remediation")
-st.warning(
-    "Research prototype: the built-in model uses simulated demonstration data, not "
-    "laboratory measurements. Its outputs are illustrative and must not be used to "
-    "select a real water-treatment process or claim environmental safety."
+st.set_page_config(
+    page_title="EcoNano AI",
+    page_icon="🌿",
+    layout="wide"
 )
 
-@st.cache_data
-def make_demo_data(n=1200, seed=17):
-    """Create explicitly synthetic data for testing the app workflow."""
-    rng = np.random.default_rng(seed)
-    materials = np.array(["ZnO", "TiO2", "Fe3O4", "Biochar-composite"])
-    material = rng.choice(materials, n)
-    concentration = rng.uniform(0.1, 2.0, n)       # g/L
-    pH = rng.uniform(4.0, 10.0, n)
-    time = rng.uniform(15, 180, n)                  # minutes
-    pollutant = rng.choice(["Dye", "Pharmaceutical", "Metal ion"], n)
-    base = pd.Series(material).map({
-        "ZnO": 68, "TiO2": 73, "Fe3O4": 55, "Biochar-composite": 62
-    }).to_numpy()
-    pollutant_adj = pd.Series(pollutant).map({
-        "Dye": 8, "Pharmaceutical": -5, "Metal ion": -12
-    }).to_numpy()
-    pH_penalty = np.abs(pH - 7.0) * 2.0
-    conc_effect = 13 * (1 - np.exp(-concentration))
-    time_effect = 12 * (1 - np.exp(-time / 65))
-    noise = rng.normal(0, 5, n)
-    removal = np.clip(base + pollutant_adj + conc_effect + time_effect - pH_penalty + noise, 3, 98)
-    return pd.DataFrame({
-        "material": material, "concentration_g_L": concentration, "pH": pH,
-        "contact_time_min": time, "pollutant_group": pollutant,
-        "removal_efficiency_pct": removal
+# Custom styling
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #f1f8f3, #ffffff);
+}
+.main-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #14532d;
+}
+.subtitle {
+    color: #52705d;
+    font-size: 17px;
+}
+div[data-testid="stMetric"] {
+    background: #e8f5e9;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid #c8e6c9;
+}
+.stButton button {
+    background-color: #16834a;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Header
+st.markdown(
+    '<div class="main-title">🌿 EcoNano AI</div>',
+    unsafe_allow_html=True
+)
+st.markdown(
+    '<div class="subtitle">Intelligent Nanotechnology for Sustainable Water Remediation</div>',
+    unsafe_allow_html=True
+)
+
+st.divider()
+
+# Sidebar navigation
+st.sidebar.title("🌱 EcoNano Navigation")
+
+page = st.sidebar.radio(
+    "Explore Platform",
+    [
+        "🏠 Dashboard",
+        "💧 Water Analyzer",
+        "🧬 Material Explorer",
+        "📊 Performance Comparison",
+        "🌍 Sustainability Center",
+        "ℹ️ About Project"
+    ]
+)
+
+materials = {
+    "ZnO Nanoparticles": 0.78,
+    "Titanium Dioxide (TiO₂)": 0.82,
+    "Magnetite (Fe₃O₄)": 0.73,
+    "Biochar Composite": 0.85
+}
+
+if page == "🏠 Dashboard":
+
+    st.subheader("Welcome to EcoNano AI")
+
+    st.write(
+        "An interactive computational platform exploring "
+        "nanomaterial-assisted approaches to water remediation."
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric("Material Candidates", "4")
+    c2.metric("Pollutant Categories", "3")
+    c3.metric("Research Focus", "Sustainable Water")
+
+    st.subheader("Explore Our Technology")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.info("💧 **Water Analysis**\n\nExplore water-treatment scenarios.")
+
+        st.success("🧬 **Nanomaterial Explorer**\n\nCompare potential materials.")
+
+    with col2:
+        st.warning("📊 **AI Predictions**\n\nExplore illustrative model outputs.")
+
+        st.info("🌍 **Environmental Impact**\n\nConsider sustainability and safety.")
+
+    st.divider()
+
+    st.subheader("Our Mission")
+
+    st.write(
+        "To connect environmental chemistry, nanotechnology, "
+        "and artificial intelligence to support sustainable "
+        "water-treatment research."
+    )
+
+elif page == "💧 Water Analyzer":
+
+    st.subheader("💧 Interactive Water Quality Analyzer")
+
+    st.write(
+        "Configure a hypothetical water-treatment scenario "
+        "and explore illustrative predictions."
+    )
+
+    with st.form("water_form"):
+
+        pollutant = st.selectbox(
+            "Select pollutant",
+            ["Dye", "Heavy Metal Ion", "Pharmaceutical"]
+        )
+
+        concentration = st.slider(
+            "Initial pollutant concentration (mg/L)",
+            1, 100, 25
+        )
+
+        ph = st.slider(
+            "Water pH",
+            2.0, 12.0, 7.0, 0.1
+        )
+
+        time = st.slider(
+            "Contact time (minutes)",
+            10, 240, 60
+        )
+
+        selected_material = st.selectbox(
+            "Select nanomaterial",
+            list(materials.keys())
+        )
+
+        submitted = st.form_submit_button(
+            "🚀 Analyze Water Sample"
+        )
+
+    if submitted:
+
+        base = materials[selected_material]
+
+        ph_factor = max(
+            0.55,
+            1 - abs(ph - 7) * 0.045
+        )
+
+        time_factor = min(time / 100, 1)
+
+        concentration_factor = max(
+            0.65,
+            1 - concentration / 250
+        )
+
+        pollutant_factor = {
+            "Dye": 1.0,
+            "Heavy Metal Ion": 0.90,
+            "Pharmaceutical": 0.85
+        }[pollutant]
+
+        estimate = (
+            base
+            * ph_factor
+            * time_factor
+            * concentration_factor
+            * pollutant_factor
+            * 100
+        )
+
+        estimate = min(95, max(0, estimate))
+
+        st.success("Scenario analysis completed!")
+
+        c1, c2, c3 = st.columns(3)
+
+        c1.metric(
+            "Illustrative Removal Estimate",
+            f"{estimate:.1f}%"
+        )
+
+        c2.metric(
+            "Initial Concentration",
+            f"{concentration} mg/L"
+        )
+
+        c3.metric(
+            "Selected Material",
+            selected_material
+        )
+
+        remaining = concentration * (1 - estimate / 100)
+
+        st.subheader("Concentration Scenario")
+
+        chart = pd.DataFrame({
+            "Stage": ["Initial", "Illustrative remaining"],
+            "Concentration (mg/L)": [
+                concentration,
+                remaining
+            ]
+        })
+
+        fig = px.bar(
+            chart,
+            x="Stage",
+            y="Concentration (mg/L)",
+            color="Stage",
+            title="Illustrative Pollutant Concentration"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.warning(
+            "Research disclaimer: This is a demonstration "
+            "calculation using illustrative assumptions, not "
+            "an experimentally validated prediction. It must "
+            "not be used to determine real drinking-water safety."
+        )
+
+elif page == "🧬 Material Explorer":
+
+    st.subheader("🧬 Nanomaterial Explorer")
+
+    descriptions = {
+        "ZnO Nanoparticles":
+            "Zinc oxide nanoparticles are investigated for "
+            "photocatalytic and environmental applications.",
+
+        "Titanium Dioxide (TiO₂)":
+            "Titanium dioxide is widely researched for "
+            "photocatalytic degradation of pollutants.",
+
+        "Magnetite (Fe₃O₄)":
+            "Magnetite is a magnetic iron oxide with potential "
+            "applications in separation and remediation.",
+
+        "Biochar Composite":
+            "Biochar-based materials are investigated for "
+            "adsorption and sustainable pollutant management."
+    }
+
+    for name, description in descriptions.items():
+
+        with st.expander("🔬 " + name):
+            st.write(description)
+
+            if name == "ZnO Nanoparticles":
+                st.write("Research focus: photocatalysis and sensing.")
+
+            elif name == "Titanium Dioxide (TiO₂)":
+                st.write("Research focus: photocatalytic treatment.")
+
+            elif name == "Magnetite (Fe₃O₄)":
+                st.write("Research focus: magnetic separation.")
+
+            else:
+                st.write("Research focus: adsorption and waste valorization.")
+
+elif page == "📊 Performance Comparison":
+
+    st.subheader("📊 Compare Candidate Materials")
+
+    st.write(
+        "Explore illustrative material scores. "
+        "These are demonstration values, not measured efficiencies."
+    )
+
+    comparison = pd.DataFrame({
+        "Material": list(materials.keys()),
+        "Illustrative Score": [
+            value * 100 for value in materials.values()
+        ]
     })
 
-df = make_demo_data()
-features = ["material", "concentration_g_L", "pH", "contact_time_min", "pollutant_group"]
-X = pd.get_dummies(df[features], columns=["material", "pollutant_group"])
-y = df["removal_efficiency_pct"]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = RandomForestRegressor(n_estimators=180, min_samples_leaf=2, random_state=42)
-model.fit(X_train, y_train)
-pred_test = model.predict(X_test)
-mae = mean_absolute_error(y_test, pred_test)
-r2 = r2_score(y_test, pred_test)
+    fig = px.bar(
+        comparison,
+        x="Material",
+        y="Illustrative Score",
+        color="Material",
+        title="Illustrative Material Comparison",
+        text_auto=".1f"
+    )
 
-with st.sidebar:
-    st.header("Scenario inputs")
-    material = st.selectbox("Candidate material", ["ZnO", "TiO2", "Fe3O4", "Biochar-composite"])
-    pollutant = st.selectbox("Pollutant group", ["Dye", "Pharmaceutical", "Metal ion"])
-    concentration = st.slider("Material concentration (g/L)", 0.1, 2.0, 0.8, 0.1)
-    pH = st.slider("Water pH", 4.0, 10.0, 7.0, 0.1)
-    contact_time = st.slider("Contact time (minutes)", 15, 180, 90, 5)
+    fig.update_layout(
+        yaxis_title="Demonstration score (not experimental %)"
+    )
 
-scenario = pd.DataFrame([{
-    "material": material, "concentration_g_L": concentration, "pH": pH,
-    "contact_time_min": contact_time, "pollutant_group": pollutant
-}])
-scenario_enc = pd.get_dummies(scenario, columns=["material", "pollutant_group"]).reindex(columns=X.columns, fill_value=0)
-pred = float(model.predict(scenario_enc)[0])
+    st.plotly_chart(fig, use_container_width=True)
 
-c1, c2, c3 = st.columns(3)
-c1.metric("Illustrative predicted removal", f"{pred:.1f}%")
-c2.metric("Demo-model MAE", f"{mae:.1f} percentage points")
-c3.metric("Demo-model R²", f"{r2:.2f}")
+    st.dataframe(
+        comparison,
+        use_container_width=True,
+        hide_index=True
+    )
 
-st.caption("Metrics are calculated against held-out rows from the same synthetic dataset. They do not measure real-world predictive validity.")
+elif page == "🌍 Sustainability Center":
 
-st.markdown("### Scenario interpretation")
-st.write(
-    f"For the selected **{material}** / **{pollutant.lower()}** scenario, the demonstration model "
-    f"estimates **{pred:.1f}%** removal under the entered conditions. This is a software-workflow "
-    "demonstration only, not an experimentally supported estimate."
-)
+    st.subheader("🌍 Environmental Sustainability Center")
 
-st.markdown("### Compare candidate materials")
-compare_rows = []
-for m in ["ZnO", "TiO2", "Fe3O4", "Biochar-composite"]:
-    row = pd.DataFrame([{
-        "material": m, "concentration_g_L": concentration, "pH": pH,
-        "contact_time_min": contact_time, "pollutant_group": pollutant
-    }])
-    row = pd.get_dummies(row, columns=["material", "pollutant_group"]).reindex(columns=X.columns, fill_value=0)
-    compare_rows.append({"Material": m, "Illustrative removal (%)": float(model.predict(row)[0])})
-comparison = pd.DataFrame(compare_rows).sort_values("Illustrative removal (%)", ascending=False)
-fig = px.bar(comparison, x="Material", y="Illustrative removal (%)", range_y=[0, 100],
-             title="Synthetic demonstration scenario — not measured performance")
-st.plotly_chart(fig, use_container_width=True)
+    st.write(
+        "Nanomaterial performance alone does not establish "
+        "environmental sustainability."
+    )
 
-st.markdown("### What the model learned in this demo")
-importance = pd.DataFrame({"Feature": X.columns, "Importance": model.feature_importances_})
-importance = importance.sort_values("Importance", ascending=False).head(10)
-fig2 = px.bar(importance.sort_values("Importance"), x="Importance", y="Feature", orientation="h",
-              title="Random Forest feature importance (synthetic data)")
-st.plotly_chart(fig2, use_container_width=True)
+    factors = [
+        "Nanoparticle toxicity assessment",
+        "Material recovery and reuse",
+        "Energy requirements",
+        "Chemical waste generation",
+        "Lifecycle environmental impact",
+        "Potential secondary pollution"
+    ]
 
-st.markdown("### Environmental safeguards checklist")
-st.write("A high predicted removal percentage is not enough to recommend a material. Before any real deployment, assess:")
-st.markdown("""
-- Nanoparticle release and persistence after treatment.
-- Aquatic ecotoxicity and effects on beneficial microorganisms.
-- Recovery, regeneration and safe disposal of spent material.
-- Energy, chemical and water demand across the treatment lifecycle.
-- Performance using replicated experiments and independent validation data.
-""")
+    st.markdown("### Sustainability assessment checklist")
 
-st.markdown("### Download the demo dataset")
-st.download_button("Download synthetic demo data (CSV)", df.to_csv(index=False).encode("utf-8"),
-                   file_name="econano_synthetic_demo_data.csv", mime="text/csv")
+    for factor in factors:
+        st.checkbox(factor, key=factor)
 
-with st.expander("Methodology and limitations"):
-    st.markdown("""
-    **Model:** Random Forest regression trained on generated demonstration records.
+    st.info(
+        "These checks are a research-planning aid, not a "
+        "certification of environmental safety."
+    )
 
-    **Purpose:** Demonstrate an end-to-end interactive workflow, feature encoding,
-    model evaluation, scenario prediction and visual comparison.
+elif page == "ℹ️ About Project":
 
-    **Not established:** Real pollutant-removal performance, material safety,
-    generalization to real water matrices, or suitability for treatment design.
+    st.subheader("About EcoNano AI")
 
-    **Next research step:** Replace the synthetic dataset with a traceable,
-    publication-derived dataset. Record DOI/source, experimental conditions,
-    units, replicates and uncertainty. Evaluate generalization by holding out
-    entire source studies rather than randomly splitting individual rows.
+    st.write("""
+    EcoNano AI is a student-developed computational research
+    prototype combining:
+
+    - Environmental Chemistry
+    - Nanomaterials Science
+    - Machine Learning
+    - Sustainable Water Remediation
+
+    The platform explores how computational tools can support
+    early-stage research into nanomaterial-assisted treatment.
+
+    **Current limitation:** The demonstration calculations use
+    illustrative assumptions and synthetic data. They are not
+    experimentally validated.
     """)
+
+    st.markdown("### Technology Stack")
+
+    st.write(
+        "🐍 Python | 🎈 Streamlit | 📊 Plotly | "
+        "🧮 Pandas | 🤖 Machine Learning"
+    )
+
+st.divider()
+
+st.markdown(
+    "<center>🌿 EcoNano AI | Building a Sustainable Future "
+    "Through Science and Innovation</center>",
+    unsafe_allow_html=True
+)
