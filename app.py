@@ -15,6 +15,25 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+/* Make technology cards readable */
+.feature-card,
+.feature-card h1,
+.feature-card h2,
+.feature-card h3,
+.feature-card p,
+.feature-card span {
+    color: #ffffff !important;
+}
+
+/* Improve readability of dark cards */
+.feature-card {
+    color: #ffffff !important;
+}
+
+/* Hide unwanted black metric indicators */
+div[data-testid="stMetricDelta"] {
+    display: none !important;
+}
 /* Keep normal text dark */
 .stApp p,
 .stApp li,
