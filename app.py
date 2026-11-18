@@ -15,6 +15,25 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+/* Improve text visibility */
+.stApp p,
+.stApp li,
+.stApp label,
+.stApp h1,
+.stApp h2,
+.stApp h3 {
+    color: #111111 !important;
+}
+
+/* Make dashboard descriptions readable */
+div[data-testid="stMarkdownContainer"] p {
+    color: #111111 !important;
+}
+
+/* Keep buttons white */
+.stButton button {
+    color: white !important;
+}
 
 .stApp {
     background: linear-gradient(
