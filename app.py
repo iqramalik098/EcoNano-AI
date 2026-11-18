@@ -90,9 +90,9 @@ elif page=="Water Analyzer":
         run=st.form_submit_button("Analyze scenario",use_container_width=True)
     if run:
         ranked=compare(pollutant,concentration,ph,minutes)
-        st.session_state.analysis={"pollutant":pollutant,"concentration":concentration,"ph":ph,"minutes":minutes,"ranked":ranked}
+       st.session_state.analysis_result={"pollutant":pollutant,"concentration":concentration,"ph":ph,"minutes":minutes,"ranked":ranked}
     if "analysis" in st.session_state:
-        d=st.session_state.analysis; ranked=d["ranked"]; best=ranked.iloc[0]
+        d=st.session_state.analysis_result; ranked=d["ranked"]; best=ranked.iloc[0]
         x,y,z=st.columns(3); x.metric("Top candidate",best["Material"]); y.metric("Illustrative score",f"{best['Illustrative score (%)']}%"); z.metric("Scenario pH",d["ph"])
         fig=px.bar(ranked,x="Material",y="Illustrative score (%)",color="Material",text="Illustrative score (%)",title="Illustrative screening scores — not measured removal")
         fig.update_layout(showlegend=False,yaxis_range=[0,100]); st.plotly_chart(fig,use_container_width=True)
