@@ -97,7 +97,8 @@ div[data-testid="stExpander"] {
     border-radius: 14px;
 }
 
-</style>
+st.markdown("""
+<style>
 """, unsafe_allow_html=True)
 .stApp {
     background: linear-gradient(
