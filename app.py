@@ -15,6 +15,27 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+/* Keep normal text dark */
+.stApp p,
+.stApp li,
+.stApp label {
+    color: #111111 !important;
+}
+
+/* Make text white inside dark cards */
+div[data-testid="stMetric"],
+div[data-testid="stMetric"] label,
+div[data-testid="stMetric"] [data-testid="stMetricValue"],
+div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+    color: #ffffff !important;
+}
+
+/* Make headings visible */
+.stApp h1,
+.stApp h2,
+.stApp h3 {
+    color: #111111 !important;
+}
 /* Improve text visibility */
 .stApp p,
 .stApp li,
